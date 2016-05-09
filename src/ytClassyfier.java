@@ -76,7 +76,7 @@ public class ytClassyfier {
 
         Instances unlabeled = new Instances(
                                 new BufferedReader(
-                                        new FileReader("C:\\Users\\essej\\Documents\\ytSent\\src\\resources\\"+writeFileName)));
+                                        new FileReader(writeFileName)));
 
         unlabeled.setClassIndex(unlabeled.numAttributes() - 1);
 
@@ -84,12 +84,40 @@ public class ytClassyfier {
         labeled.setClassIndex(labeled.numAttributes() - 1);
         //System.out.println(labeled.toString());
 
+        double totalSent = 0;
         for (int i = 0; i < unlabeled.numInstances(); i++) {
-            System.out.println(i);
-            System.out.println(unlabeled.instance(i));
+            //System.out.println(i);
+            //System.out.println(unlabeled.instance(i));
             double clsLabel = model.classifyInstance(unlabeled.instance(i));
             labeled.instance(i).setClassValue(clsLabel);
+            totalSent = totalSent + clsLabel;
         }
+
+        System.out.println(totalSent);
+        System.out.println(labeled.numInstances());
+        double avgSent = totalSent/labeled.numInstances();
+        if(avgSent > 0.75) {
+            System.out.println("This video's comments are overwhelmingly positive: " + avgSent);
+        }
+        else if (avgSent > 0.5) {
+            System.out.println("This video's comments are mostly positive: " + avgSent);
+        }
+        else if (avgSent > 0.25) {
+            System.out.println("This video's comments are somewhat positive: " + avgSent);
+        }
+        else if(avgSent > -0.25) {
+            System.out.println("This video's comments are fairly neutral: " + avgSent);
+        }
+        else if (avgSent > -0.5) {
+            System.out.println("This video's comments are somewhat negative: " + avgSent);
+        }
+        else if (avgSent > -0.75) {
+            System.out.println("This video's comments are mostly negative: " + avgSent);
+        }
+        else {
+            System.out.println("This video's comments are overwhelmingly negative: " + avgSent);
+        }
+       //System.out.println("The average sentiment of this video's comments (with -1 being negative and 1 being positive) is: " + avgSent);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(writeFileName));
         writer.write(labeled.toString());
@@ -105,6 +133,7 @@ public class ytClassyfier {
         System.out.println(args[0]);
         clean(args[0]);
         //clean("C:\\Users\\essej\\Documents\\cmpu-366\\src\\resources\\comments-NQD4n-6Q_q8.csv");
+        System.out.println(args[1]);
         test(bayesModel, args[1]);
         //test(bayesModel,"C:\\Users\\essej\\Documents\\cmpu-366\\src\\resources\\classifiedComments.arff");
         //test(bayesModel, "C:\\Users\\essej\\OneDrive\\Documents\\VASSAR\\Senior_Year\\Spring\\CMPU366\\Final-Project\\classyfiedComments.arff");
