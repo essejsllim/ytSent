@@ -19,6 +19,7 @@ public class ytClassyfier {
     DataSource source;
     Instances data;
     NaiveBayes bayesModel;
+    
 
     public ytClassyfier(String filename) throws Exception {
         source = new DataSource(filename);
@@ -48,13 +49,13 @@ public class ytClassyfier {
 
     public static void clean(String readFileName) {
         //set the correct script name
-        String scriptName = "C:\\Users\\essej\\Documents\\ytSent\\src\\resources\\cleanCommentsCSV.py";
+        String scriptName = "C:\\Users\\sfmem_000\\Desktop\\youtubeSentiment\\src\\resources\\cleanCommentsCSV.py";
         //initialize the Python interpreter
         PythonInterpreter.initialize(System.getProperties(), System.getProperties(), new String[0]);
         org.python.util.PythonInterpreter interp = new org.python.util.PythonInterpreter();
         //set the variable names for the python script
         interp.set("readFileName", readFileName);
-        interp.set("writeFileName", "C:\\Users\\essej\\Documents\\ytSent\\src\\resources\\cleanedComments.txt");
+        interp.set("writeFileName", "C:\\Users\\sfmem_000\\Desktop\\youtubeSentiment\\src\\resources\\cleanedComments.txt");
         //run the script
         interp.execfile(scriptName);
         //close the interpreter
@@ -62,12 +63,12 @@ public class ytClassyfier {
 
     public static void test(NaiveBayes model, String writeFileName) throws Exception {
         //set the correct script name
-        String scriptName = "C:\\Users\\essej\\Documents\\ytSent\\src\\resources\\buildArffForUnlabeled.py";
+        String scriptName = "C:\\Users\\sfmem_000\\Desktop\\youtubeSentiment\\src\\resources\\buildArffForUnlabeled.py";
         //initialize the python interpreter
         PythonInterpreter.initialize(System.getProperties(), System.getProperties(), new String[0]);
         org.python.util.PythonInterpreter interp = new org.python.util.PythonInterpreter();
         //set the variable names for the python script
-        interp.set("readFileName", "C:\\Users\\essej\\Documents\\ytSent\\src\\resources\\cleanedComments.txt");
+        interp.set("readFileName", "C:\\Users\\sfmem_000\\Desktop\\youtubeSentiment\\src\\resources\\cleanedComments.txt");
         interp.set("writeFileName", writeFileName);
         //run the script
         interp.execfile(scriptName);
@@ -76,7 +77,7 @@ public class ytClassyfier {
 
         Instances unlabeled = new Instances(
                                 new BufferedReader(
-                                        new FileReader("C:\\Users\\essej\\Documents\\ytSent\\src\\resources\\"+writeFileName)));
+                                        new FileReader("C:\\Users\\sfmem_000\\Desktop\\youtubeSentiment\\src\\resources\\"+writeFileName)));
 
         unlabeled.setClassIndex(unlabeled.numAttributes() - 1);
 
@@ -100,7 +101,7 @@ public class ytClassyfier {
     }
 
     public static void main (String[] args) throws Exception {
-        ytClassyfier ytc = new ytClassyfier("C:\\Users\\essej\\Documents\\ytSent\\src\\resources\\trainingModel.arff");
+        ytClassyfier ytc = new ytClassyfier("C:\\Users\\sfmem_000\\Desktop\\youtubeSentiment\\src\\resources\\trainingModel.arff");
         NaiveBayes bayesModel = ytc.constructBayes(ytc.data);
         System.out.println(args[0]);
         clean(args[0]);
