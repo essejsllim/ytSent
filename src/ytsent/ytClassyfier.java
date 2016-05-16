@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.util.Random;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NumericToNominal;
@@ -25,6 +26,7 @@ public class ytClassyfier {
     DataSource source;
     Instances data;
     NaiveBayes bayesModel;
+    InputStream trainingModel;
     
 
     public ytClassyfier(String filename) throws Exception {
@@ -52,29 +54,29 @@ public class ytClassyfier {
         bayes.buildClassifier(instance);
         return bayes;
     }
-
-    public static void clean(String readFileName) {
+    
+    public void clean(String readFileName) {
         //set the correct script name
-        String scriptName = "src\\resources\\cleanCommentsCSV.py";
+        String scriptName = "resources\\cleanCommentsCSV.py";
         //initialize the Python interpreter
         PythonInterpreter.initialize(System.getProperties(), System.getProperties(), new String[0]);
         org.python.util.PythonInterpreter interp = new org.python.util.PythonInterpreter();
         //set the variable names for the python script
         interp.set("readFileName", readFileName);
-        interp.set("writeFileName", "src\\resources\\cleanedComments.txt");
+        interp.set("writeFileName", "resources\\cleanedComments.txt");
         //run the script
         interp.execfile(scriptName);
         //close the interpreter
     }
 
-    public static String test(NaiveBayes model, String writeFileName) throws Exception {
+    public String test(NaiveBayes model, String writeFileName) throws Exception {
         //set the correct script name
-        String scriptName = "src\\resources\\buildArffForUnlabeled.py";
+        String scriptName = "resources\\buildArffForUnlabeled.py";
         //initialize the python interpreter
         PythonInterpreter.initialize(System.getProperties(), System.getProperties(), new String[0]);
         org.python.util.PythonInterpreter interp = new org.python.util.PythonInterpreter();
         //set the variable names for the python script
-        interp.set("readFileName", "src\\resources\\cleanedComments.txt");
+        interp.set("readFileName", "resources\\cleanedComments.txt");
         interp.set("writeFileName", writeFileName);
         //run the script
         interp.execfile(scriptName);
@@ -152,7 +154,7 @@ public class ytClassyfier {
         writer.newLine();
         writer.flush();
         writer.close();
-        output = "<html><center>" + message + "<br>" + "Average Sentiment:  " + avgSent
+        output = "<html><center>" + "Average Sentiment:  " + avgSent
                 + "<br> Positive Comments: " + nicePercent(numPositive, labeled.numInstances())
                 + "<br> Neutral Comments: " + nicePercent(numNeutral, labeled.numInstances())
                 + "<br> Negative Comments: " + nicePercent(numNegative, labeled.numInstances())
