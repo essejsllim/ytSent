@@ -121,15 +121,17 @@ public class SentimentJFrame extends javax.swing.JFrame {
             public void run() {
                 try {
                     outputMessage.setText("Cleaning comments..."); 
+                    //construct classifier
                     ytClassyfier ytc = new ytClassyfier("resources\\trainingModel.arff"); 
-                    NaiveBayes bayesModel = ytc.constructBayes(ytc.data);
+                    //clean input comments
                     ytc.clean(inputCSV.getText());
                     outputMessage.setText("Evaluating sentiments...");
-                    outputMessage.setText(ytc.test(bayesModel, outFile.getText()));
+                    //test comments for sentiment. Output the return to outputMessage
+                    outputMessage.setText(ytc.test(ytc.bayesModel, outFile.getText()));
 
                 } catch (Exception ex) {
                     Logger.getLogger(SentimentJFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    outputMessage.setText("Invalid File Path");
+                    outputMessage.setText("Error: Invalid File Path");
                 }
             }
         });

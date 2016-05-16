@@ -102,18 +102,18 @@ public class ytClassyfier {
         
         Instances labeled = new Instances(nominalData);
         labeled.setClassIndex(labeled.numAttributes() - 1);
-        //System.out.println(labeled.toString());
 
         double numPositive = 0, numNegative = 0, numNeutral = 0;
         double totalSent = 0;
         for (int i = 0; i < numericData.numInstances(); i++) {
-            //System.out.println(i);
-            //System.out.println(unlabeled.instance(i));
-            double clsLabel = model.classifyInstance(numericData.instance(i));
+            //get sentiment value as both nominal and numeric types
+            double numericLabel = model.classifyInstance(numericData.instance(i));
             double nominalLabel = model.classifyInstance(nominalData.instance(i)) -1;
-            labeled.instance(i).setClassValue(clsLabel);
-            totalSent = totalSent + clsLabel;
+            
+            labeled.instance(i).setClassValue(numericLabel);
+            totalSent = totalSent + numericLabel;
           
+            //count posiive, negative, and neutral comments
             if (nominalLabel>0){
                 numPositive ++;
             } else if (nominalLabel<0){
@@ -124,44 +124,27 @@ public class ytClassyfier {
         }
        
         
-        double avgSent = totalSent/nominalData.numInstances();
-        String output;
-        String message;
-        if(avgSent > 0.75) {
-            message = "This video's comments are overwhelmingly positive";
-        }
-        else if (avgSent > 0.5) {
-            message = "This video's comments are mostly positive";
-        }
-        else if (avgSent > 0.25) {
-            message = "This video's comments are somewhat positive";
-        }
-        else if(avgSent > -0.25) {
-            message = "This video's comments are fairly neutral";
-        }
-        else if (avgSent > -0.5) {
-            message = "This video's comments are somewhat negative";
-        }
-        else if (avgSent > -0.75) {
-            message = "This video's comments are mostly negative";
-        }
-        else {
-            message = "This video's comments are overwhelmingly negative";
-        }
-
+        
+        //write to arff file
         BufferedWriter writer = new BufferedWriter(new FileWriter(writeFileName));
         writer.write(labeled.toString());
         writer.newLine();
         writer.flush();
         writer.close();
-        output = "<html><center>" + "Average Sentiment:  " + avgSent
+        
+        //return statistics as a html formatted string
+        double avgSent = totalSent/nominalData.numInstances();
+        String output;
+        output = "<html><center>" + "Average Sentiment:  " + ((double)Math.round(avgSent*1000))/1000
                 + "<br> Positive Comments: " + nicePercent(numPositive, labeled.numInstances())
                 + "<br> Neutral Comments: " + nicePercent(numNeutral, labeled.numInstances())
                 + "<br> Negative Comments: " + nicePercent(numNegative, labeled.numInstances())
                 + "</center></html>";
         return(output);
     }
-    static String nicePercent(double part, double whole){
+    
+    //for two input numbers, returns a nicely formatted string representing percentage
+    private String nicePercent(double part, double whole){
         return Double.toString(((double) Math.round(10000*part/whole)) /100)+ "%";
     }
 }
